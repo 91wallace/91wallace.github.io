@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopee — Autorização</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: #f7f6f3;
+    color: #1a1917;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .box {
+    background: #fff;
+    border: 1px solid #e5e3dc;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+  p { font-size: 14px; color: #6b6860; margin-bottom: 20px; line-height: 1.5; }
+  .code-box {
+    background: #f7f6f3;
+    border: 1px solid #d0cec5;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: monospace;
+    font-size: 14px;
+    word-break: break-all;
+    margin-bottom: 16px;
+    text-align: left;
+    position: relative;
+  }
+  .code-box .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #a09e98;
+    display: block;
+    margin-bottom: 4px;
+    font-family: -apple-system, sans-serif;
+  }
+  button {
+    background: #1a1917;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+  button:hover { opacity: .85; }
+  .empty { color: #a09e98; font-size: 14px; padding: 20px 0; }
+  .copied { color: #3b6d11; font-size: 12px; margin-top: 8px; opacity: 0; transition: opacity .2s; }
+  .copied.show { opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <h1>Autorização Shopee</h1>
+    <p>Copie os valores abaixo e cole no app Loja 3D.</p>
+    <div id="content"></div>
+  </div>
+
+<script>
+const params = new URLSearchParams(window.location.search)
+const code = params.get('code')
+const shopId = params.get('shop_id')
+const content = document.getElementById('content')
+
+if (!code) {
+  content.innerHTML = '<div class="empty">Nenhum código de autorização encontrado nesta URL.</div>'
+} else {
+  content.innerHTML = `
+    <div class="code-box">
+      <span class="label">Code</span>
+      ${code}
+    </div>
+    <div class="code-box">
+      <span class="label">Shop ID</span>
+      ${shopId || '(não informado)'}
+    </div>
+    <button onclick="copyAll()">Copiar tudo</button>
+    <div class="copied" id="copied-msg">Copiado!</div>
+  `
+}
+
+function copyAll() {
+  const text = `code: ${code}\nshop_id: ${shopId}`
+  navigator.clipboard.writeText(text).then(() => {
+    const msg = document.getElementById('copied-msg')
+    msg.classList.add('show')
+    setTimeout(() => msg.classList.remove('show'), 2000)
+  })
+}
+</script>
+</body>
+</html>
