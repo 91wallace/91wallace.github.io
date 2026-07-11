@@ -5,16 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopee — Autorização</title>
 <style>
+  :root {
+    --primary-color: #1a1917;
+    --primary-hover: #33322e;
+    --bg-color: #f7f6f3;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
-    background: #f7f6f3;
+    background: var(--bg-color);
     color: #1a1917;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    transition: background-color 0.3s ease;
   }
   .box {
     background: #fff;
@@ -24,20 +30,25 @@
     max-width: 480px;
     width: 100%;
     text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
   }
-  h1 { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 8px; transition: color 0.3s ease; }
   p { font-size: 14px; color: #6b6860; margin-bottom: 20px; line-height: 1.5; }
   .code-box {
     background: #f7f6f3;
     border: 1px solid #d0cec5;
     border-radius: 8px;
-    padding: 14px 16px;
+    padding: 14px 80px 14px 16px;
     font-family: monospace;
     font-size: 14px;
     word-break: break-all;
     margin-bottom: 16px;
     text-align: left;
     position: relative;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .code-box .label {
     font-size: 11px;
@@ -48,26 +59,33 @@
     margin-bottom: 4px;
     font-family: -apple-system, sans-serif;
   }
-  button {
-    background: #1a1917;
+  .copy-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 14px;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
     cursor: pointer;
-    width: 100%;
-    margin-top: 4px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
   }
-  button:hover { opacity: .85; }
-  .empty { color: #a09e98; font-size: 14px; padding: 20px 0; }
-  .copied { color: #3b6d11; font-size: 12px; margin-top: 8px; opacity: 0; transition: opacity .2s; }
-  .copied.show { opacity: 1; }
+  .copy-btn:hover {
+    background: var(--primary-hover);
+  }
+  .copy-btn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+  .empty { color: #a09e98; font-size: 14px; padding: 20px 0; line-height: 1.5; }
 </style>
 </head>
 <body>
   <div class="box">
-    <h1>Autorização Shopee</h1>
+    <h1 id="title">Autorização</h1>
     <p>Copie os valores abaixo e cole no app Loja 3D.</p>
     <div id="content"></div>
   </div>
@@ -76,32 +94,93 @@
 const params = new URLSearchParams(window.location.search)
 const code = params.get('code')
 const shopId = params.get('shop_id')
-const content = document.getElementById('content')
+const state = params.get('state')
+const error = params.get('error')
+let platform = params.get('platform')
 
-if (!code) {
-  content.innerHTML = '<div class="empty">Nenhum código de autorização encontrado nesta URL.</div>'
-} else {
-  content.innerHTML = `
-    <div class="code-box">
-      <span class="label">Code</span>
-      ${code}
-    </div>
-    <div class="code-box">
-      <span class="label">Shop ID</span>
-      ${shopId || '(não informado)'}
-    </div>
-    <button onclick="copyAll()">Copiar tudo</button>
-    <div class="copied" id="copied-msg">Copiado!</div>
-  `
+// Detect platform if not explicitly set
+if (!platform) {
+  if (shopId) {
+    platform = 'shopee'
+  } else if (state) {
+    platform = 'tiktok'
+  } else {
+    platform = 'generic'
+  }
 }
 
-function copyAll() {
-  const text = `code: ${code}\nshop_id: ${shopId}`
+// Apply platform specific customization
+const titleEl = document.getElementById('title')
+if (platform === 'shopee') {
+  document.title = 'Shopee — Autorização'
+  titleEl.innerText = 'Autorização Shopee'
+  document.documentElement.style.setProperty('--primary-color', '#ee4d2d')
+  document.documentElement.style.setProperty('--primary-hover', '#d73c1f')
+  document.documentElement.style.setProperty('--bg-color', '#fef8f6')
+} else if (platform === 'tiktok') {
+  document.title = 'TikTok Shop — Autorização'
+  titleEl.innerText = 'Autorização TikTok Shop'
+  document.documentElement.style.setProperty('--primary-color', '#fe2c55')
+  document.documentElement.style.setProperty('--primary-hover', '#e12248')
+  document.documentElement.style.setProperty('--bg-color', '#faf8f8')
+} else {
+  document.title = 'Autorização de Integração'
+  titleEl.innerText = 'Autorização'
+  document.documentElement.style.setProperty('--primary-color', '#1a1917')
+  document.documentElement.style.setProperty('--primary-hover', '#33322e')
+  document.documentElement.style.setProperty('--bg-color', '#f7f6f3')
+}
+
+const content = document.getElementById('content')
+
+if (error) {
+  content.innerHTML = `<div class="empty" style="color: #d93838; font-weight: 500;">Erro na autorização: ${error}</div>`
+} else if (!code) {
+  content.innerHTML = '<div class="empty">Nenhum código de autorização encontrado nesta URL.</div>'
+} else {
+  let html = `
+    <div class="code-box">
+      <span class="label">Código (Code)</span>
+      <span>${code}</span>
+      <button class="copy-btn" onclick="copyText('${code}', this)">Copiar</button>
+    </div>
+  `
+
+  if (shopId) {
+    html += `
+      <div class="code-box">
+        <span class="label">Shop ID</span>
+        <span>${shopId}</span>
+        <button class="copy-btn" onclick="copyText('${shopId}', this)">Copiar</button>
+      </div>
+    `
+  }
+
+  if (state) {
+    html += `
+      <div class="code-box">
+        <span class="label">Estado (State)</span>
+        <span>${state}</span>
+        <button class="copy-btn" onclick="copyText('${state}', this)">Copiar</button>
+      </div>
+    `
+  }
+
+  content.innerHTML = html
+}
+
+function copyText(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
-    const msg = document.getElementById('copied-msg')
-    msg.classList.add('show')
-    setTimeout(() => msg.classList.remove('show'), 2000)
-  })
+    const originalText = btn.innerText;
+    btn.innerText = 'Copiado!';
+    btn.style.background = '#3b6d11';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.innerText = originalText;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2000);
+  });
 }
 </script>
 </body>
