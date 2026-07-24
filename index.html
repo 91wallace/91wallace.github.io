@@ -81,14 +81,246 @@
     transform: translateY(-50%) scale(0.95);
   }
   .empty { color: #a09e98; font-size: 14px; padding: 20px 0; line-height: 1.5; }
+
+  /* Layout container to keep box centered and footer at the bottom */
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 480px;
+    gap: 16px;
+  }
+  
+  /* Footer styles */
+  .footer {
+    font-size: 12px;
+    color: #8c8980;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .footer a {
+    color: var(--primary-color);
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .footer a:hover {
+    color: var(--primary-hover);
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+  }
+  .modal.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    background-color: #fff;
+    border: 1px solid #e5e3dc;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .modal.show .modal-content {
+    transform: translateY(0);
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e3dc;
+  }
+  .modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1917;
+  }
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    font-weight: 300;
+    color: #8c8980;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.2s ease;
+  }
+  .close-btn:hover {
+    color: var(--primary-color);
+  }
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    font-size: 14px;
+    color: #4a4842;
+    line-height: 1.6;
+    text-align: left;
+  }
+  /* Custom scrollbar for modal body */
+  .modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+  .modal-body::-webkit-scrollbar-track {
+    background: #f7f6f3;
+    border-radius: 4px;
+  }
+  .modal-body::-webkit-scrollbar-thumb {
+    background: #d0cec5;
+    border-radius: 4px;
+  }
+  .modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+  }
+  .modal-body h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1917;
+    margin-bottom: 12px;
+  }
+  .modal-body h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1917;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 8px;
+  }
+  .modal-body p {
+    margin-bottom: 12px;
+    color: #4a4842;
+  }
+  .modal-body ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+    list-style-type: none;
+  }
+  .modal-body li {
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .modal-body li strong {
+    color: #1a1917;
+  }
+  .modal-footer-text {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e3dc;
+    font-size: 12px;
+    color: #8c8980;
+  }
 </style>
+
 </head>
 <body>
-  <div class="box">
-    <h1 id="title">Autorização</h1>
-    <p>Copie os valores abaixo e cole no app Loja 3D.</p>
-    <div id="content"></div>
+  <div class="container">
+    <div class="box">
+      <h1 id="title">Autorização</h1>
+      <p>Copie os valores abaixo e cole no app Loja 3D.</p>
+      <div id="content"></div>
+    </div>
+    <footer class="footer">
+      Ao continuar, você concorda com a nossa <a href="#" id="open-privacy">Política de Privacidade e Termos de Uso</a>.
+    </footer>
   </div>
+
+  <!-- Privacy Modal -->
+  <div id="privacy-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>POLÍTICA DE PRIVACIDADE E TERMOS DE USO</h2>
+        <button class="close-btn" id="close-privacy">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>SOFTWARE LOJA 3D – GESTÃO INTERNA E INTEGRAÇÃO DE MARKETPLACES</h3>
+        <p>Esta Política de Privacidade descreve como o software "Loja 3D" (doravante denominado "aplicativo" ou "software") coleta, armazena, trata, protege e descarta os dados e registros de conexão e de uso de seus operadores (doravante denominados "usuários"), em conformidade com as diretrizes do Marco Civil da Internet (Lei nº 12.965/2014) e da Lei Geral de Proteção de Dados Pessoais - LGPD (Lei nº 13.709/2018).</p>
+        
+        <h4>APRESENTAÇÃO E ESCOPO DO SOFTWARE</h4>
+        <p>O Loja 3D é um aplicativo desktop proprietário desenvolvido especificamente para gestão interna e suporte operacional a e-commerce de produtos impressos em 3D. Suas principais funções incluem a organização de catálogos de produtos, associação de arquivos de impressão 3D (formatos .stl, .3mf e afins), controle de estoques e insumos físicos, acompanhamento do status de fabricação e sincronização com marketplaces parceiros (tais como Shopee e TikTok Shop).</p>
+        
+        <h4>DIREITOS DO USUÁRIO (Artigo 7º do Marco Civil da Internet)</h4>
+        <p>Ao utilizar o software, o usuário tem assegurados os seguintes direitos:</p>
+        <ul>
+          <li><strong>I -</strong> Inviolabilidade da intimidade e da vida privada, garantida a proteção e a confidencialidade de seus dados de navegação e de operação.</li>
+          <li><strong>II -</strong> Não fornecimento a terceiros de seus dados pessoais, salvo mediante consentimento livre, expresso e informado ou nas hipóteses previstas em lei.</li>
+          <li><strong>III -</strong> Informações claras e completas sobre o regime de coleta, uso, armazenamento, tratamento e proteção de seus dados pessoais.</li>
+          <li><strong>IV -</strong> Exclusão definitiva dos dados pessoais que tiver fornecido, mediante requerimento formal ao término da relação de uso do software, ressalvadas as hipóteses de guarda obrigatória de registros previstas nesta Lei.</li>
+        </ul>
+        
+        <h4>DADOS PROCESSADOS PELO APLICATIVO</h4>
+        <p>Para cumprir suas finalidades operacionais, o software processa as seguintes categorias de informações:</p>
+        <ul>
+          <li><strong>a) Dados de Configuração e Conexão Local:</strong> Credenciais e tokens de autenticação das lojas nos marketplaces integrados, e credenciais de acesso ao banco de dados SQL Server da empresa.</li>
+          <li><strong>b) Dados de Catálogo e Produção:</strong> Nomes, imagens e especificações de produtos, caminhos físicos e metadados de arquivos de modelagem 3D (.stl, .3mf).</li>
+          <li><strong>c) Dados de Vendas e Pedidos:</strong> Informações de pedidos sincronizadas a partir de plataformas integradas (número de rastreamento, status do pedido, quantidade de itens, valores brutos e líquidos, taxas de comissão do marketplace).</li>
+          <li><strong>d) Registros de Acesso à Aplicação (Logs):</strong> A data, o horário e as ações executadas no sistema, para auditoria interna de segurança.</li>
+        </ul>
+        
+        <h4>GUARDA OBRIGATÓRIA DE REGISTROS (Artigo 15 do Marco Civil da Internet)</h4>
+        <p>Por se enquadrar como um provedor de aplicação de internet nos termos do Marco Civil da Internet, o software e a infraestrutura que o suporta mantêm o registro de acesso à aplicação, sob sigilo e em ambiente controlado, pelo prazo mínimo de 6 (seis) meses. Estes dados servem exclusivamente para garantir a segurança da operação e para fins de cumprimento de ordens judiciais.</p>
+        
+        <h4>LOCAL E SEGURANÇA NO ARMAZENAMENTO DOS DADOS</h4>
+        <p>Todos os dados operacionais coletados pelo software são guardados exclusivamente em duas pontas, sob total controle e responsabilidade da própria empresa licenciada:</p>
+        <ul>
+          <li><strong>I - Dispositivo Local do Usuário:</strong> As credenciais de integração, o estado de sincronização e o cache de pedidos são criptografados ou mantidos em arquivos locais específicos da aplicação (pedidos.json, produtos.json, configurações).</li>
+          <li><strong>II - Banco de Dados Interno:</strong> A persistência a longo prazo dos dados financeiros, histórico de pedidos e catálogo de produtos é armazenada localmente no servidor SQL Server configurado pela empresa, sem envio a servidores externos ou nuvens públicas de terceiros.</li>
+        </ul>
+        <p>As comunicações com APIs externas (Shopee Open Platform e TikTok Shop API) ocorrem por meio de canais criptografados HTTPS, utilizando os protocolos de segurança oficiais de cada plataforma.</p>
+        
+        <h4>COMPARTILHAMENTO DE INFORMAÇÕES</h4>
+        <p>O aplicativo não realiza a venda, cessão ou compartilhamento de quaisquer dados com terceiros. A transferência de informações ocorre estritamente de maneira automática e operacional para:</p>
+        <ul>
+          <li><strong>a)</strong> As APIs dos marketplaces vinculados à conta da empresa, para atualização de estoque e status do pedido.</li>
+          <li><strong>b)</strong> O banco de dados centralizado da organização (SQL Server), configurado de forma explícita pelo administrador do sistema.</li>
+        </ul>
+        
+        <h4>EXCLUSÃO E RETENÇÃO DE DADOS</h4>
+        <p>O usuário poderá solicitar, a qualquer tempo, a exclusão de suas credenciais locais do aplicativo e de seu usuário operacional. Os dados acumulados de faturamento e produção permanecerão arquivados no banco de dados da empresa para fins contábeis, fiscais e estatísticos. Os registros de acesso (logs) serão eliminados automaticamente após o prazo legal de 6 meses de retenção.</p>
+        
+        <h4>RESPONSABILIDADES DO USUÁRIO</h4>
+        <p>Ao operar o aplicativo, o usuário compromete-se a:</p>
+        <ul>
+          <li><strong>I -</strong> Manter a segurança de sua estação de trabalho, não fornecendo acesso à sua conta operacional para terceiros não autorizados.</li>
+          <li><strong>II -</strong> Utilizar o software unicamente para fins profissionais ligados à operação da empresa.</li>
+          <li><strong>III -</strong> Cumprir as normas internas de segurança da informação estabelecidas pela empresa titular da licença do software.</li>
+        </ul>
+        
+        <h4>CONTATO E SUPORTE</h4>
+        <p>Para esclarecer dúvidas sobre esta Política de Privacidade ou solicitar o exercício de direitos relativos aos seus dados pessoais, o operador deve entrar em contato com o encarregado pelo tratamento de dados pessoais (DPO) da organização ou com o administrador do sistema interno da empresa.</p>
+        
+        <div class="modal-footer-text">
+          <p><strong>Versão do Documento:</strong> 1.1<br><strong>Última Atualização:</strong> 24 de julho de 2026.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 <script>
 const params = new URLSearchParams(window.location.search)
@@ -182,6 +414,37 @@ function copyText(text, btn) {
     }, 2000);
   });
 }
+
+// Modal interactivity for Privacy Policy
+const privacyModal = document.getElementById('privacy-modal');
+const openPrivacyBtn = document.getElementById('open-privacy');
+const closePrivacyBtn = document.getElementById('close-privacy');
+
+openPrivacyBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  privacyModal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+});
+
+const closeModal = () => {
+  privacyModal.classList.remove('show');
+  document.body.style.overflow = '';
+};
+
+closePrivacyBtn.addEventListener('click', closeModal);
+
+privacyModal.addEventListener('click', (e) => {
+  if (e.target === privacyModal) {
+    closeModal();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && privacyModal.classList.contains('show')) {
+    closeModal();
+  }
+});
+
 </script>
 </body>
 </html>
