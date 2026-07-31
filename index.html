@@ -325,17 +325,18 @@
 <script>
 const params = new URLSearchParams(window.location.search)
 const code = params.get('code')
-const shopId = params.get('shop_id')
+const shopId = params.get('shop_id') || params.get('shopId')
+const shopCipher = params.get('shop_cipher') || params.get('cipher') || params.get('shopCipher')
 const state = params.get('state')
 const error = params.get('error')
 let platform = params.get('platform')
 
 // Detect platform if not explicitly set
 if (!platform) {
-  if (shopId) {
-    platform = 'shopee'
-  } else if (state) {
+  if (state || shopCipher) {
     platform = 'tiktok'
+  } else if (shopId) {
+    platform = 'shopee'
   } else {
     platform = 'generic'
   }
@@ -384,6 +385,16 @@ if (error) {
         <span class="label">Shop ID</span>
         <span>${shopId}</span>
         <button class="copy-btn" onclick="copyText('${shopId}', this)">Copiar</button>
+      </div>
+    `
+  }
+
+  if (shopCipher) {
+    html += `
+      <div class="code-box">
+        <span class="label">Shop ID / Cipher</span>
+        <span>${shopCipher}</span>
+        <button class="copy-btn" onclick="copyText('${shopCipher}', this)">Copiar</button>
       </div>
     `
   }
